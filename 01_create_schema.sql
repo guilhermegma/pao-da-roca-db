@@ -36,7 +36,10 @@ CREATE TABLE Produtos (
     id_produto SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     tipo_produto VARCHAR(50) NOT NULL,
-    valor_venda DECIMAL(10, 2) NOT NULL
+    valor_venda DECIMAL(10, 2) NOT NULL,
+
+    CONSTRAINT chk_tipo_produto CHECK (tipo_produto IN ('artesanal', 'industrializado'))
+
 );
 
 CREATE TABLE Lote (
