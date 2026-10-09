@@ -1,57 +1,63 @@
--- Inserindo Fornecedores
-INSERT INTO Fornecedores (cnpj, razao_social, endereco) VALUES 
-('11.111.111/0001-11', 'Moinho Fazenda Trigo LTDA', 'Rua da Farinha, 100 - Centro'),
-('22.222.222/0001-22', 'Laticínios Vale Verde', 'Estrada do Leite, Km 2');
+-- Carga inicial: Clientes
+INSERT INTO Cliente (cpf, nome, telefone, data_nascimento, valor_acumulado) VALUES
+('11111111111', 'João Silva', '71988888888', '1985-05-15', 150.50),
+('22222222222', 'Maria Oliveira', '71999999999', '1992-10-20', 320.00),
+('33333333333', 'Carlos Souza', '71977777777', '1978-03-08', 0.00);
 
--- Inserindo Catálogo de Insumos (Sem quantidade aqui, apenas o nome)
-INSERT INTO Insumos (nome, unidade_medida) VALUES 
-('Farinha de Trigo', 'kg'),
-('Fermento Biológico', 'kg'),
-('Leite Integral', 'litros');
+-- Carga inicial: Fornecedores
+INSERT INTO Fornecedor (cnpj, razao_social, endereco) VALUES
+('12345678000199', 'Moinho do Nordeste Ltda', 'Rua Industrial, 100 - Feira de Santana'),
+('98765432000188', 'Laticínios Fazenda Boa', 'Rodovia BA-052, Km 12 - Ipirá'),
+('45612378000155', 'Distribuidora de Bebidas Jacuípe', 'Av. Principal, 500 - Riachão do Jacuípe');
 
--- Inserindo Catálogo de Produtos
-INSERT INTO Produtos (nome, tipo_produto, valor_venda) VALUES 
-('Pão Francês', 'Artesanal', 0.80),
-('Bolo de Milho', 'Artesanal', 15.00),
-('Coca-Cola 2L', 'Industrializado', 12.00);
+-- Carga inicial: Produtos
+INSERT INTO Produto (nome, tipo_produto, valor_compra, valor_venda, quantidade_estoque) VALUES
+('Pão Francês', 'Artesanal', NULL, 0.50, 200),
+('Bolo de Fubá', 'Artesanal', NULL, 15.00, 10),
+('Refrigerante Cola 2L', 'Industrializado', 6.00, 10.00, 30),
+('Queijo Mussarela 100g', 'Industrializado', 3.50, 5.50, 50),
+('Pão Doce', 'Artesanal', NULL, 1.50, 45);
 
--- Vinculando Insumos aos Fornecedores
-INSERT INTO Fornecimento (id_fornecedor, id_insumo, preco_acordado) VALUES 
-(1, 1, 3.40),
-(1, 2, 11.50),
-(2, 3, 3.80);
+-- Carga inicial: Insumos
+INSERT INTO Insumo (nome, unidade_medida, valor_compra_atual, quantidade_estoque) VALUES
+('Farinha de Trigo', 'kg', 4.50, 150.000),
+('Açúcar Refinado', 'kg', 3.80, 50.000),
+('Fermento Biológico', 'kg', 25.00, 5.000),
+('Ovo Branco', 'unidade', 0.60, 360.000),
+('Leite Integral', 'litros', 4.20, 60.000);
 
--- Recebendo Estoque Físico: Lotes de Insumos
-INSERT INTO Lote_Insumo (id_insumo, data_compra, data_fabricacao, data_validade, quantidade_atual, valor_compra) VALUES 
-(1, '2026-10-01', '2026-09-15', '2027-03-15', 100.000, 3.50), -- Lote de Farinha
-(2, '2026-10-01', '2026-09-20', '2026-12-20', 5.000, 12.00),  -- Lote de Fermento
-(3, '2026-10-05', '2026-10-02', '2026-10-15', 20.000, 4.00);  -- Lote de Leite (Perecível)
+-- Carga inicial: Receitas
+INSERT INTO Receita (descricao_preparo, id_produto) VALUES
+('Misturar farinha, água, fermento e sal. Sovar bem, deixar descansar e assar a 200 graus.', 1),
+('Bater ovos, leite, óleo, açúcar e fubá. Adicionar fermento e assar a 180 graus por 40 min.', 2);
 
--- Dando entrada no Estoque Físico: Lotes de Produtos (Fornadas ou Compras)
-INSERT INTO Lote_Produto (id_produto, data_fabricacao, data_validade, quantidade_atual) VALUES 
-(1, '2026-10-07', '2026-10-08', 150.000), -- Fornada de Pão de hoje
-(2, '2026-10-06', '2026-10-10', 8.000),   -- Fornada de Bolo de ontem
-(3, NULL, '2027-08-01', 45.000);          -- Engradado de Coca-Cola recebido
+-- Carga inicial: Insumos por Receita
+INSERT INTO Receita_Insumo (id_receita, id_insumo, quantidade_utilizada) VALUES
+(1, 1, 0.500),
+(1, 3, 0.010),
+(2, 2, 0.300),
+(2, 4, 3.000),
+(2, 5, 0.200);
 
--- Inserindo Receitas e Ficha Técnica
-INSERT INTO Receitas (id_produto, descricao_preparo) VALUES 
-(1, 'Misturar farinha, água, sal e fermento. Deixar descansar por 2 horas e assar a 200 graus.');
+-- Carga inicial: Acordos de Fornecimento
+INSERT INTO Fornecimento (id_fornecedor, id_insumo, preco_acordado) VALUES
+(1, 1, 4.30),
+(1, 2, 3.60),
+(2, 5, 4.00),
+(2, 4, 0.55);
 
-INSERT INTO Receita_Insumo (id_receita, id_insumo, quantidade_utilizada) VALUES 
-(1, 1, 0.020), -- 20g de farinha
-(1, 2, 0.001); -- 1g de fermento
+-- Carga inicial: Vendas
+INSERT INTO Venda (data_hora, valor_total, forma_pagamento, id_cliente) VALUES
+('2026-10-08 07:30:00', 10.00, 'Pix', 1),
+('2026-10-08 08:15:00', 25.50, 'Cartão de Crédito', 2),
+('2026-10-08 09:00:00', 5.00, 'Dinheiro', NULL);
 
--- Inserindo Clientes
-INSERT INTO Clientes (cpf, nome, numero_contato, data_nascimento, valor_acumulado) VALUES 
-('111.111.111-11', 'João Carlos da Silva', '71999991111', '1985-05-15', 150.50),
-('333.333.333-33', 'Carlos Eduardo', '71999993333', '1978-02-03', 450.00);
+-- Carga inicial: Itens da Venda
+INSERT INTO Itens_Venda (id_venda, id_produto, quantidade_vendida, preco_unitario, subtotal) VALUES
+(1, 1, 20, 0.50, 10.00),
+(2, 2, 1, 15.00, 15.00),
+(2, 3, 1, 10.00, 10.00),
+(2, 1, 1, 0.50, 0.50),
+(3, 1, 10, 0.50, 5.00);
 
--- Registrando Vendas (Com Cliente Identificado e Venda Anônima)
-INSERT INTO Vendas (id_cliente, data_hora, valor_total, forma_pagamento) VALUES 
-(1, '2026-10-07 07:30:00', 8.00, 'Pix'),     -- João comprou
-(NULL, '2026-10-07 08:15:00', 12.00, 'Dinheiro'); -- Cliente Anônimo (FK como NULL)
-
--- Inserindo Itens nas Vendas (Produto_Venda)
-INSERT INTO Produto_Venda (id_venda, id_produto, quantidade_vendida, preco_unitario) VALUES 
-(1, 1, 10.000, 0.80), -- 10 pães franceses na Venda 1
-(2, 3, 1.000, 12.00); -- 1 Coca-Cola na Venda 2
+---
