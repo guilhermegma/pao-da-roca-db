@@ -32,6 +32,34 @@ CREATE TABLE Produtos (
     CONSTRAINT chk_valor_venda CHECK (valor_venda >= 0)
 );
 
+-- Tabela: Lote_Insumo
+CREATE TABLE Lote_Insumo (
+    id_lote_insumo INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_insumo INT NOT NULL,
+    data_compra DATE NOT NULL,
+    data_fabricacao DATE,
+    data_validade DATE, -- Nullable conforme dicionário
+    quantidade_atual DECIMAL(10,3) NOT NULL,
+    valor_compra DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_loteinsumo_insumo FOREIGN KEY (id_insumo)
+        REFERENCES Produtos (id_produto) -- Ou Insumos(id_insumo), a depender da tabela pai
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT chk_qtd_lote_insumo CHECK (quantidade_atual >= 0),
+    CONSTRAINT chk_valor_compra_lote CHECK (valor_compra >= 0)
+);
+
+-- Tabela: Lote_Produto
+CREATE TABLE Lote_Produto (
+    id_lote_produto INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_produto INT NOT NULL,
+    data_fabricacao DATE,
+    data_validade DATE, -- Nullable conforme dicionário
+    quantidade_atual INT NOT NULL,
+    CONSTRAINT fk_loteproduto_produto FOREIGN KEY (id_produto)
+        REFERENCES Produtos (id_produto) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT chk_qtd_lote_produto CHECK (quantidade_atual >= 0)
+);
+
 -- Tabela: Insumo
 CREATE TABLE Insumos (
     id_insumo INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -63,8 +91,8 @@ CREATE TABLE Vendas (
     CONSTRAINT chk_valor_total CHECK (valor_total >= 0)
 );
 
--- Tabela: Itens_Venda
-CREATE TABLE Itens_Venda (
+-- Tabela: Produtos_Venda
+CREATE TABLE Produtos_Venda (
     id_venda INT NOT NULL,
     id_produto INT NOT NULL,
     quantidade_vendida INT NOT NULL,
